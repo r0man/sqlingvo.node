@@ -46,12 +46,12 @@
   "Convert the `result-set` into a seq of Clojure maps."
   [result-set]
   (when result-set
-    (map (fn [row]
-           (reduce
-            (fn [m k]
-              (assoc m (keyword k) (gobj/get row k)))
-            {} (gobj/getKeys row)))
-         (.-rows result-set))))
+    (mapv (fn [row]
+            (reduce
+             (fn [m k]
+               (assoc m (keyword k) (gobj/get row k)))
+             {} (gobj/getKeys row)))
+          (.-rows result-set))))
 
 (defn execute
   "Execute `stmt` against a database and return a channel that will
