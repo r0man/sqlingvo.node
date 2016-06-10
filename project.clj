@@ -14,7 +14,7 @@
   {:dev
    {:dependencies [[org.clojure/test.check "0.9.0"]]
     :plugins [[jonase/eastwood "0.2.3"]
-              [lein-cljsbuild "1.1.2"]
+              [lein-cljsbuild "1.1.3"]
               [lein-difftest "2.0.0"]
               [lein-doo "0.1.6"]
               [lein-npm "0.6.2"]]}
@@ -23,7 +23,7 @@
    :repl
    {:dependencies [[com.cemerick/piggieback "0.2.1"]
                    [reloaded.repl "0.2.2"]]
-    :plugins [[figwheel-sidecar "0.5.2"]]
+    :plugins [[figwheel-sidecar "0.5.3-2"]]
     :init-ns user
     :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
   :aliases
