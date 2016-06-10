@@ -1,0 +1,8 @@
+language: clojure
+script: lein ci
+sudo: false
+jdk:
+  - oraclejdk8
+before_script:
+  - psql -c "CREATE DATABASE sqlingvo_node;" -U postgres
+  - psql -c "CREATE USER tiger SUPERUSER UNENCRYPTED PASSWORD 'scotch';" -U postgres

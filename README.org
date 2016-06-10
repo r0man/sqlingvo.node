@@ -1,0 +1,20 @@
+* SQLingvo.node
+  #+author: r0man
+  #+LANGUAGE: en
+
+  [[https://clojars.org/sqlingvo][https://img.shields.io/clojars/v/sqlingvo.node.svg]]
+  [[https://travis-ci.org/r0man/sqlingvo][https://travis-ci.org/r0man/sqlingvo.node.svg]]
+  [[http://jarkeeper.com/r0man/sqlingvo][http://jarkeeper.com/r0man/sqlingvo.node/status.svg]]
+  [[http://jarkeeper.com/r0man/sqlingvo][https://jarkeeper.com/r0man/sqlingvo.node/downloads.svg]]
+
+  /SQLingvo.node/ is a [[https://github.com/r0man/sqlingvo][SQLingvo]] driver for [[https://github.com/clojure/clojurescript][ClojureScript]] on
+  [[https://nodejs.org][Node.js]]. It uses [[https://github.com/clojure/core.async][core.async]] and the [[https://www.npmjs.com/package/pg-native][pg]] or [[https://www.npmjs.com/package/pg-native][pg-native]] libraries to
+  connect to a database and execute /SQL/ statements.
+
+** Usage
+
+** License
+
+   Copyright © 2016 [[https://github.com/r0man][r0man]]
+
+   Distributed under the Eclipse Public License, the same as Clojure.
