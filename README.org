@@ -2,10 +2,10 @@
   #+author: r0man
   #+LANGUAGE: en
 
-  [[https://clojars.org/sqlingvo][https://img.shields.io/clojars/v/sqlingvo.node.svg]]
-  [[https://travis-ci.org/r0man/sqlingvo][https://travis-ci.org/r0man/sqlingvo.node.svg]]
-  [[http://jarkeeper.com/r0man/sqlingvo][http://jarkeeper.com/r0man/sqlingvo.node/status.svg]]
-  [[http://jarkeeper.com/r0man/sqlingvo][https://jarkeeper.com/r0man/sqlingvo.node/downloads.svg]]
+  [[https://clojars.org/sqlingvo.node][https://img.shields.io/clojars/v/sqlingvo.node.svg]]
+  [[https://travis-ci.org/r0man/sqlingvo.node][https://travis-ci.org/r0man/sqlingvo.node.svg]]
+  [[http://jarkeeper.com/r0man/sqlingvo.node][http://jarkeeper.com/r0man/sqlingvo.node/status.svg]]
+  [[http://jarkeeper.com/r0man/sqlingvo.node][https://jarkeeper.com/r0man/sqlingvo.node/downloads.svg]]
 
   /SQLingvo.node/ is a [[https://github.com/r0man/sqlingvo][SQLingvo]] driver for [[https://github.com/clojure/clojurescript][ClojureScript]] on
   [[https://nodejs.org][Node.js]]. It uses [[https://github.com/clojure/core.async][core.async]] and the [[https://www.npmjs.com/package/pg-native][pg]] or [[https://www.npmjs.com/package/pg-native][pg-native]] libraries to
