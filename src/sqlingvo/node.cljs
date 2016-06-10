@@ -44,14 +44,15 @@
 
 (defn- to-rows
   "Convert the `result-set` into a seq of Clojure maps."
-  [result-set]
+  [db result-set]
   (when result-set
-    (mapv (fn [row]
-            (reduce
-             (fn [m k]
-               (assoc m (keyword k) (gobj/get row k)))
-             {} (gobj/getKeys row)))
-          (.-rows result-set))))
+    (let [convert (or (:sql-identifier db) identity)]
+      (mapv (fn [row]
+              (reduce
+               (fn [m k]
+                 (assoc m (keyword (convert k)) (gobj/get row k)))
+               {} (gobj/getKeys row)))
+            (.-rows result-set)))))
 
 (defn execute
   "Execute `stmt` against a database and return a channel that will
@@ -65,15 +66,17 @@
               (fn [error results]
                 (try (if error
                        (async/put! channel error)
-                       (->> (to-rows results)
+                       (->> (to-rows db results)
                             (async/put! channel)))
                      (finally (async/close! channel)))))
       channel)))
 
 (defn db
   "Return an new database."
-  [url]
-  (db/postgresql
-   {:eval-fn execute
-    :sql-placeholder util/sql-placeholder-count
-    :url url}))
+  [url & [opts]]
+  (merge (db/postgresql
+          {:eval-fn execute
+           :sql-placeholder util/sql-placeholder-count
+           :url url})
+         opts))
+
