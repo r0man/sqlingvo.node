@@ -13,10 +13,9 @@
 (defn hypenate [s]
   (str/replace (name s) "_" "-"))
 
-(def db (node/db
-         "postgres://tiger:scotch@localhost/sqlingvo_node"
-         {:sql-name underscore
-          :sql-identifier hypenate}))
+(def db (node/db "postgresql://tiger:scotch@localhost/sqlingvo_node"
+                 {:sql-name underscore
+                  :sql-identifier hypenate}))
 
 (deftest test-db-spec
   (is (fn? (:sql-name db)))
@@ -29,37 +28,30 @@
 (defn create-countries
   "Create the countries table."
   [db]
-  (sql/create-table
-   db :countries
-   (sql/column :id :serial :primary-key? true)
-   (sql/column :name :text :unique? true)
-   (sql/column :code :text)))
+  (sql/create-table db :countries
+    (sql/column :id :serial :primary-key? true)
+    (sql/column :name :text :unique? true)
+    (sql/column :code :text)))
 
 (defn drop-countries
   "Drop the countries table."
   [db]
   (sql/drop-table
-   db [:countries]
-   (sql/if-exists true)))
+      db [:countries]
+    (sql/if-exists true)))
 
 (defn insert-countries
   "Drop the countries table."
   [db]
-  (sql/insert
-   db :countries []
-   (sql/values country-data)
-   (sql/returning :*)))
+  (sql/insert db :countries []
+    (sql/values country-data)
+    (sql/returning :*)))
 
 (defn countries
   "Return all countries."
   [db]
-  (sql/select
-   db [:*]
-   (sql/from :countries)))
-
-(deftest test-db
-  (is (= (:url (node/db (:url db)))
-         (:url db))))
+  (sql/select db [:*]
+    (sql/from :countries)))
 
 (deftest test-connect
   (async done
@@ -73,7 +65,7 @@
 
 (deftest test-connect-error
   (async done
-    (go (try [db (<? (node/connect "postgres://localhost/unknown_db"))]
+    (go (try [db (<? (node/connect "postgresql://localhost/unknown_db"))]
              (assert false "Connection error expected.")
              (catch js/Error e
                (let [message (str/replace (.-message e) #"\n" "")]
@@ -99,10 +91,9 @@
 (deftest test-hyphenate
   (async done
     (go (let [db (<? (node/connect db))]
-          (is (= (<!? (sql/select
-                       db [:*]
-                       (sql/from :information_schema.tables)
-                       (sql/where '(= :table_name "pg_statistic"))))
+          (is (= (<!? (sql/select db [:*]
+                        (sql/from :information_schema.tables)
+                        (sql/where '(= :table_name "pg_statistic"))))
                  [{:commit-action nil,
                    :reference-generation nil,
                    :is-typed "NO",

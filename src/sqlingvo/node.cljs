@@ -33,7 +33,11 @@
                  (async/close! channel))
              (->> (assoc db :connection connection)
                   (async/put! channel))))
-         (.connect pg (:url db)))
+         (.connect pg #js {:database (:name db)
+                           :host (:server-name db)
+                           :password (:password db)
+                           :port (:server-port db)
+                           :user (:username db)}))
     channel))
 
 (defn disconnect
@@ -74,9 +78,8 @@
 (defn db
   "Return an new database."
   [url & [opts]]
-  (merge (db/postgresql
-          {:eval-fn execute
-           :sql-placeholder util/sql-placeholder-count
-           :url url})
-         opts))
-
+  (->> (merge
+        {:eval-fn execute
+         :sql-placeholder util/sql-placeholder-count}
+        opts)
+       (db/db url)))
