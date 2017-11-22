@@ -1,9 +1,11 @@
-(ns sqlingvo.node
-  (:require [cljs.core.async :as async]
+(ns sqlingvo.node.async
+  (:require [clojure.spec.alpha :as s]
+            [cljs.core.async :as async]
             [cljs.nodejs :as node]
             [goog.object :as gobj]
             [sqlingvo.core :as sql]
             [sqlingvo.db :as db]
+            [sqlingvo.node.driver :as driver]
             [sqlingvo.util :as util]))
 
 (def pg
@@ -50,13 +52,7 @@
   "Convert the `result-set` into a seq of Clojure maps."
   [db result-set]
   (when result-set
-    (let [convert (or (:sql-identifier db) identity)]
-      (mapv (fn [row]
-              (reduce
-               (fn [m k]
-                 (assoc m (keyword (convert k)) (gobj/get row k)))
-               {} (gobj/getKeys row)))
-            (.-rows result-set)))))
+    (mapv #(driver/to-row db %1) (.-rows result-set))))
 
 (defn execute
   "Execute `stmt` against a database and return a channel that will
@@ -77,9 +73,9 @@
 
 (defn db
   "Return an new database."
-  [url & [opts]]
-  (->> (merge
-        {:eval-fn execute
-         :sql-placeholder util/sql-placeholder-count}
-        opts)
-       (db/db url)))
+  [spec & [opts]]
+  (let [db (sql/db spec opts)]
+    (merge db {:eval-fn execute
+               :sql-placeholder util/sql-placeholder-count})))
+
+(s/fdef db :args (s/cat :db any? :opts (s/? (s/nilable map?))))

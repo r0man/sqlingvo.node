@@ -1,11 +1,11 @@
-(ns sqlingvo.node-test
+(ns sqlingvo.node.async-test
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs.core.async :as async]
             [cljs.test :refer-macros [async deftest is]]
             [cljs.pprint :refer [pprint]]
             [clojure.string :as str]
             [sqlingvo.core :as sql]
-            [sqlingvo.node :as node :refer-macros [<? <!?]]))
+            [sqlingvo.node.async :as node :refer-macros [<? <!?]]))
 
 (defn underscore [s]
   (str/replace (name s) "-" "_"))

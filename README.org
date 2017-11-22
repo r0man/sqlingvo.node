@@ -12,23 +12,20 @@
   connect to a database and execute /SQL/ statements.
 
 ** Usage
+*** Sync
 
-   #+BEGIN_SRC clojure :exports both :results verbatim
-     (ns sqlingvo.node-demo
-       (:require-macros [cljs.core.async.macros :refer [go]])
-       (:require [cljs.core.async :as async]
-                 [cljs.pprint :refer [pprint]]
+    #+BEGIN_SRC clojure :exports both :results verbatim
+     (ns sqlingvo.node.sync-usage
+       (:require [cljs.pprint :refer [pprint]]
                  [sqlingvo.core :as sql]
-                 [sqlingvo.node :as db :refer-macros [<? <!?]]))
+                 [sqlingvo.node.sync :as db]))
 
-     (def db (db/db "postgres://tiger:scotch@localhost/sqlingvo_node"))
+     (def db (db/db "postgresql://tiger:scotch@localhost/sqlingvo_node"))
 
-     (go (let [db (<? (db/connect db))]
-           (pprint (<!? (sql/select db [:*]
-                          (sql/from :information_schema.tables)
-                          (sql/where '(= :table_name "pg_statistic")))))
-           (db/disconnect db)))
-   #+END_SRC
+     (pprint @(sql/select db [:*]
+                (sql/from :information_schema.tables)
+                (sql/where '(= :table_name "pg_statistic"))))
+    #+END_SRC
 
     #+RESULTS:
     : [{:is_insertable_into "YES",
@@ -41,7 +38,40 @@
     :   :user_defined_type_name nil,
     :   :commit_action nil,
     :   :table_catalog "sqlingvo_node",
-    :   :reference_generation nil, 
+    :   :reference_generation nil,
+    :   :table_name "pg_statistic"}]
+
+*** Async
+
+    #+BEGIN_SRC clojure :exports both :results verbatim
+     (ns sqlingvo.node.async-usage
+       (:require-macros [cljs.core.async.macros :refer [go]])
+       (:require [cljs.core.async :as async]
+                 [cljs.pprint :refer [pprint]]
+                 [sqlingvo.core :as sql]
+                 [sqlingvo.node.async :as db :refer-macros [<? <!?]]))
+
+     (def db (db/db "postgresql://tiger:scotch@localhost/sqlingvo_node"))
+
+     (go (let [db (<? (db/connect db))]
+           (pprint (<!? (sql/select db [:*]
+                          (sql/from :information_schema.tables)
+                          (sql/where '(= :table_name "pg_statistic")))))
+           (db/disconnect db)))
+    #+END_SRC
+
+    #+RESULTS:
+    : [{:is_insertable_into "YES",
+    :   :self_referencing_column_name nil,
+    :   :user_defined_type_catalog nil,
+    :   :table_type "BASE TABLE",
+    :   :table_schema "pg_catalog",
+    :   :is_typed "NO",
+    :   :user_defined_type_schema nil,
+    :   :user_defined_type_name nil,
+    :   :commit_action nil,
+    :   :table_catalog "sqlingvo_node",
+    :   :reference_generation nil,
     :   :table_name "pg_statistic"}]
 
 ** License
