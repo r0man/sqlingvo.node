@@ -1,4 +1,4 @@
-(defproject sqlingvo.node "0.2.0-SNAPSHOT"
+(defproject sqlingvo.node "0.2.0"
   :description "A ClojureScript driver for SQLingvo on Node.js."
   :url "http://github.com/r0man/sqlingvo.node"
   :license {:name "Eclipse Public License"
