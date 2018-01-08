@@ -1,10 +1,14 @@
 (ns sqlingvo.node.sync
-  (:require [clojure.spec.alpha :as s]
-            [pg-native :as Client]
+  (:require [cljs.nodejs :as node]
+            [clojure.spec.alpha :as s]
             [sqlingvo.core :as sql]
             [sqlingvo.node.driver :as driver]
             [sqlingvo.url :as url]
             [sqlingvo.util :as util]))
+
+(def Client
+  "The native Node.js PostgreSQL client."
+  (node/require "pg-native"))
 
 (defrecord PgSyncDriver [connection db]
   driver/Driver

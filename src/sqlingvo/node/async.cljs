@@ -13,6 +13,10 @@
   (let [package (node/require "pg")]
     (or (.-native package) package)))
 
+(def Pool
+  "The connection pool."
+  (.-Pool pg))
+
 (defn throw-err
   "If `x` is a JavaScript error throw it, otherwise return `x`."
   [x]
@@ -35,11 +39,11 @@
                  (async/close! channel))
              (->> (assoc db :connection connection)
                   (async/put! channel))))
-         (.connect pg #js {:database (:name db)
-                           :host (:server-name db)
-                           :password (:password db)
-                           :port (:server-port db)
-                           :user (:username db)}))
+         (.connect (Pool. #js {:database (:name db)
+                               :host (:server-name db)
+                               :password (:password db)
+                               :port (:server-port db)
+                               :user (:username db)})))
     channel))
 
 (defn disconnect

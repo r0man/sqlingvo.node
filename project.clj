@@ -5,9 +5,9 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :min-lein-version "2.6.1"
   :deploy-repositories [["releases" :clojars]]
-  :dependencies [[org.clojure/clojure "1.9.0-RC1"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
                  [org.clojure/core.async "0.3.465"]
-                 [sqlingvo "0.9.11"]]
+                 [sqlingvo "0.9.17"]]
   :profiles
   {:dev
    {:dependencies [[org.clojure/test.check "0.9.0"]]
@@ -18,8 +18,7 @@
    :provided
    {:dependencies [[org.clojure/clojurescript "1.9.946"]]}
    :repl
-   {:dependencies [[com.cemerick/piggieback "0.2.2"]
-                   [reloaded.repl "0.2.4"]]
+   {:dependencies [[com.cemerick/piggieback "0.2.2"]]
     :plugins [[figwheel-sidecar "0.5.14"]]
     :init-ns user
     :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
@@ -42,7 +41,7 @@
      :compiler
      {:main 'sqlingvo.node.test
       :npm-deps
-      {:pg "5.0.0"
+      {:pg "7.4.1"
        :pg-native "2.2.0"}
       :install-deps true
       :optimizations :none
