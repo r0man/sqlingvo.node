@@ -88,22 +88,45 @@
           _ (<!? (drop-countries db))
           (done)))))
 
+(def pg-statisticts
+  {:commit-action nil,
+   :reference-generation nil,
+   :is-typed "NO",
+   :is-insertable-into "YES",
+   :table-catalog "sqlingvo_node",
+   :user-defined-type-schema nil,
+   :user-defined-type-name nil,
+   :user-defined-type-catalog nil,
+   :table-schema "pg_catalog",
+   :self-referencing-column-name nil,
+   :table-name "pg_statistic",
+   :table-type "BASE TABLE"})
+
+(defn- select-pg-statisticts [db]
+  (sql/select db [:*]
+    (sql/from :information_schema.tables)
+    (sql/where '(= :table_name "pg_statistic"))))
+
 (deftest test-hyphenate
   (async done
     (go (let [db (<? (node/connect db))]
-          (is (= (<!? (sql/select db [:*]
-                        (sql/from :information_schema.tables)
-                        (sql/where '(= :table_name "pg_statistic"))))
-                 [{:commit-action nil,
-                   :reference-generation nil,
-                   :is-typed "NO",
-                   :is-insertable-into "YES",
-                   :table-catalog "sqlingvo_node",
-                   :user-defined-type-schema nil,
-                   :user-defined-type-name nil,
-                   :user-defined-type-catalog nil,
-                   :table-schema "pg_catalog",
-                   :self-referencing-column-name nil,
-                   :table-name "pg_statistic",
-                   :table-type "BASE TABLE"}]))
+          (is (= (<!? (select-pg-statisticts db))
+                 [pg-statisticts]))
+          (<? (node/disconnect db))
           (done)))))
+
+(deftest test-pool
+  (async done
+    (go (let [db (<? (node/start db))]
+          (is (:pool db))
+          (is (= (.-totalCount (:pool db)) 0))
+          (let [db (<? (node/connect db))]
+            (is (:connection db))
+            (is (= (.-totalCount (:pool db)) 1))
+            (is (= (<!? (select-pg-statisticts db))
+                   [pg-statisticts]))
+            (let [db (<? (node/disconnect db))]
+              (is (nil? (:connection db)))
+              (let [db (<? (node/stop db))]
+                (is (nil? (:pool db)))
+                (done))))))))
