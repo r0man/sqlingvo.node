@@ -1,9 +1,9 @@
 (ns sqlingvo.node.async-test
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require [cljs.core.async :as async]
-            [cljs.test :refer-macros [async deftest is]]
-            [cljs.pprint :refer [pprint]]
+            [clojure.pprint :refer [pprint]]
             [clojure.string :as str]
+            [clojure.test :refer [async deftest is testing]]
             [sqlingvo.core :as sql]
             [sqlingvo.node.async :as node :refer-macros [<? <!?]]))
 
@@ -65,7 +65,7 @@
 
 (deftest test-connect-error
   (async done
-    (go (try [db (<? (node/connect "postgresql://localhost/unknown_db"))]
+    (go (try [db (<? (node/connect (node/db "postgresql://localhost/unknown_db")))]
              (assert false "Connection error expected.")
              (catch js/Error e
                (let [message (str/replace (.-message e) #"\n" "")]
@@ -117,16 +117,20 @@
 
 (deftest test-pool
   (async done
-    (go (let [db (<? (node/start db))]
+    (go (let [db (node/start db)]
           (is (:pool db))
           (is (= (.-totalCount (:pool db)) 0))
-          (let [db (<? (node/connect db))]
-            (is (:connection db))
-            (is (= (.-totalCount (:pool db)) 1))
+          (testing "use first available client"
             (is (= (<!? (select-pg-statisticts db))
-                   [pg-statisticts]))
-            (let [db (<? (node/disconnect db))]
-              (is (nil? (:connection db)))
-              (let [db (<? (node/stop db))]
-                (is (nil? (:pool db)))
-                (done))))))))
+                   [pg-statisticts])))
+          (testing "connect client and release"
+            (let [db (<? (node/connect db))]
+              (is (:connection db))
+              (is (= (.-totalCount (:pool db)) 1))
+              (is (= (<!? (select-pg-statisticts db))
+                     [pg-statisticts]))
+              (let [db (<? (node/disconnect db))]
+                (is (nil? (:connection db)))
+                (let [db (<? (node/stop db))]
+                  (is (nil? (:pool db)))
+                  (done)))))))))

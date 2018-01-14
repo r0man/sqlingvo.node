@@ -33,6 +33,8 @@
   [db]
   (some? (:connection db)))
 
+(s/fdef connected? :args (s/cat :db sql/db?))
+
 (defn- config
   "Returns the `db` config."
   [db]
@@ -103,15 +105,10 @@
 (defn start
   "Start the `db` connection pool."
   [db]
-  (let [channel (async/chan)]
-    (try (let [pool (Pool. (clj->js (config db)))]
-           (->> (assoc db :pool pool)
-                (async/put! channel)))
-         (catch js/Error e
-           (async/put! channel e))
-         (finally
-           (async/close! channel)))
-    channel))
+  (->> (Pool. (clj->js (config db)))
+       (assoc db :pool)))
+
+(s/fdef start :args (s/cat :db sql/db?))
 
 (defn stop
   "Stop the `db` connection pool."
@@ -124,12 +121,16 @@
          (.end (:pool db)))
     channel))
 
+(s/fdef stop :args (s/cat :db sql/db?))
+
 (defn connect
   "Connect to the database."
   [db]
   (if (:pool db)
     (connect-pool db)
     (connect-client db)))
+
+(s/fdef connect :args (s/cat :db sql/db?))
 
 (defn disconnect
   "Disconnect from the database."
@@ -138,15 +139,17 @@
     (disconnect-pool db)
     (disconnect-client db)))
 
+(s/fdef disconnect :args (s/cat :db sql/db?))
+
 (defn execute
   "Execute `stmt` against a database and return a channel that will
   contain the results or an error."
   [stmt & [opts]]
   (let [{:keys [db] :as ast} (sql/ast stmt)
         [sql & args] (sql/sql ast)]
-    (assert (connected? db))
     (let [channel (async/chan)]
-      (.query (:connection db) sql (into-array args)
+      (.query (or (:connection db) (:pool db)) sql
+              (into-array args)
               (fn [error results]
                 (try (if error
                        (async/put! channel error)
