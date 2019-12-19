@@ -5,21 +5,21 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :min-lein-version "2.6.1"
   :deploy-repositories [["releases" :clojars]]
-  :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/core.async "0.3.465"]
-                 [sqlingvo "0.9.17"]]
+  :dependencies [[org.clojure/clojure "1.10.1"]
+                 [org.clojure/core.async "0.6.532"]
+                 [sqlingvo "0.9.31"]]
   :profiles
   {:dev
-   {:dependencies [[org.clojure/test.check "0.9.0"]]
-    :plugins [[jonase/eastwood "0.2.5"]
+   {:dependencies [[org.clojure/test.check "0.10.0"]]
+    :plugins [[jonase/eastwood "0.3.6"]
               [lein-cljsbuild "1.1.7"]
               [lein-difftest "2.0.0"]
-              [lein-doo "0.1.8"]]}
+              [lein-doo "0.1.11"]]}
    :provided
-   {:dependencies [[org.clojure/clojurescript "1.9.946"]]}
+   {:dependencies [[org.clojure/clojurescript "1.10.597"]]}
    :repl
    {:dependencies [[com.cemerick/piggieback "0.2.2"]]
-    :plugins [[figwheel-sidecar "0.5.14"]]
+    :plugins [[figwheel-sidecar "0.5.19"]]
     :init-ns user
     :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}
   :aliases
